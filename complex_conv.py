@@ -103,3 +103,41 @@ def modrelu(x, data_format="channels_last"):
                         tf.math.imag(x) * scale)
 
     return output
+
+def avgpool(tf_input, sizes = None, strides = None, padding = None):
+  tf_real = tf.math.real(tf_input)
+  tf_imag = tf.math.imag(tf_input)
+  real_out = tf.keras.layers.AvgPool2D()(tf_real)
+  imag_out = tf.keras.layers.AvgPool2D()(tf_imag)
+  tf_output = tf.complex(real_out, imag_out)
+  return tf_output
+
+def flatten(tf_input):
+  '''
+    
+  Flattens input array along each dimension if input is high-dimensional algebraic valued
+    
+  '''
+  tf_real = tf.math.real(tf_input)
+  tf_imag = tf.math.imag(tf_input)
+    
+  out = tf.complex(tf.keras.layers.Flatten()(tf_real), tf.keras.layers.Flatten()(tf_imag))
+ 
+    
+  return out
+
+def Dense(tf_input,units,activation = "relu" ):
+  tf_real = tf.math.real(tf_input)
+  tf_imag = tf.math.imag(tf_input)
+
+  tf_real_real = tf.keras.layers.Dense(units=units, activation = activation)(tf_real)
+  tf_imag_real = tf.keras.layers.Dense(units=units, activation = activation)(tf_imag)
+  tf_real_imag = tf.keras.layers.Dense(units=units, activation = activation)(tf_real)
+  tf_imag_imag = tf.keras.layers.Dense(units=units, activation = activation)(tf_imag)
+
+  real_out = tf_real_real - tf_imag_imag
+  imag_out = tf_real_imag - tf_imag_real
+
+  tf_output = tf.complex(real_out,imag_out)
+  return tf_output
+
